@@ -4,12 +4,18 @@ import cors from "cors";
 import pino from "pino-http";
 const app = express();
 const PORT = process.env.PORT ?? 3000;
+
 app.use(express.json());
 app.use(cors());
+
+const isProd = process.env.NODE_ENV === "production";
 app.use(
   pino({
     level: 'info',
-    transport: {
+    transport: isProd
+    ? undefined
+    :
+      {
       target: 'pino-pretty',
       options: {
         colorize: true,
@@ -21,6 +27,11 @@ app.use(
     },
   }),
 );
+
+app.get("/", (req, res) => {
+  res.status(200).json({ ok: true, service: "notes-api" });
+});
+
 app.get("/notes", (req, res) => {
   res.status(200).json({
 
@@ -53,7 +64,7 @@ app.use((err, req, res, next) => {
   console.error('Error:', err.message);
   res.status(500).json({
     message: err.message,
-    
+
   });
 });
 
