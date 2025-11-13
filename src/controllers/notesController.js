@@ -6,11 +6,11 @@ export const getAllNotes = async (req, res) => {
   res.status(200).json(notes);
 };
 
-export const getNoteById = async (req, res)=> {
+export const getNoteById = async (req, res, next)=> {
   const {noteId} = req.params;
   const note = await Note.findById(noteId);
   if(!note) {
-    return res.status(404).json({message: "Note not found"});
+    return next(createHttpError(404, "Note not found"));
   }
 res.status(200).json(
  note
@@ -45,8 +45,9 @@ export const updateNote = async (req,res, next)=> {
     {new:true},
   );
   if(!note) {
-    next(createHttpError(404, "Note not found"));
-    return;
+    // сучасна версія без next throw createHttpError(404, "Note not found")
+    return next(createHttpError(404, "Note not found"));
+
   }
   res.status(200).json(note);
 };
