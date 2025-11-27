@@ -22,6 +22,13 @@ const noteSchema = new mongoose.Schema (
     enum: TAGS
 
   },
+  userId: {
+    type: mongoose.Schema.ObjectId,
+    ref: "User",
+    required: true,
+
+
+  }
 },
 {
   timestamps: true,
