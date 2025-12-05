@@ -1,7 +1,7 @@
 import { Router } from "express";
 import { celebrate  } from "celebrate";
-import { loginUser, logoutUser, refreshUserSession, registerUser } from "../controllers/authController.js";
-import { loginUserSchema, registerUserSchema } from "../validations/authValidation.js";
+import { loginUser, logoutUser, refreshUserSession, registerUser, requestResetEmail, resetPassword } from "../controllers/authController.js";
+import { loginUserSchema, registerUserSchema, requestResetEmailSchema, resetPasswordSchema } from "../validations/authValidation.js";
 
 
    const authRoutes = Router();
@@ -10,4 +10,8 @@ import { loginUserSchema, registerUserSchema } from "../validations/authValidati
    authRoutes.post("/auth/logout", logoutUser );
   //  при рефреші немає валідації
    authRoutes.post("/auth/refresh", refreshUserSession);
+   authRoutes.post("/auth/request-reset-email", celebrate(requestResetEmailSchema), requestResetEmail);
+   authRoutes.post("/auth/reset-password",celebrate(resetPasswordSchema), resetPassword );
 export default authRoutes;
+
+
