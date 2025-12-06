@@ -184,9 +184,9 @@ export const resetPassword = async (req, res) => {
 
   });
   if(!user) {
-    next(createHttpError(404, "User not found")
-    );
-    return;
+    throw createHttpError(404, "User not found")
+    ;
+    
   }
 
 
