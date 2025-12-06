@@ -8,7 +8,7 @@ import { sendEmail } from "../utils/sendMail.js";
 import path from "node:path";
 import fs from "node:fs/promises";
 import Handlebars from "handlebars";
-import { AsyncResource } from "node:async_hooks";
+
 
 
 export const registerUser = async (req, res) => {
@@ -103,7 +103,7 @@ res.status(200).json({message: "Session refreshed"});
 
 // Створимо контролер, який оброблятиме запит на зміну пароля:
 
-export const requestResetEmail = async( req,res, next)=> {
+export const requestResetEmail = async( req,res)=> {
   const {email} = req.body;
   const user = await User.findOne({email});
 if(!user) {
@@ -137,7 +137,7 @@ const template = Handlebars.compile(templateSource);
 const html = template ({
   name: user.username,
   link: `${process.env.FRONTEND_DOMAIN}/reset-password?token=${resetToken}`,
-}); 
+});
 
 
 
@@ -151,8 +151,8 @@ try {
     html,
   });
 } catch {
-  next(createHttpError(500, 'Failed to send the email, please try again later.'));
-  return;
+  throw createHttpError(500, 'Failed to send the email, please try again later.');
+
 }
 
   res.status(200).json({
@@ -164,7 +164,7 @@ try {
 // Контролер виконує чотири ключові кроки:
 //  перевіряє токен, знаходить користувача, хешує новий пароль і оновлює запис.
 
-export const resetPassword = async (req, res, next) => {
+export const resetPassword = async (req, res) => {
   const {token, password} = req.body;
   // 1. Перевіряємо/декодуємо токен
   let payload;
@@ -172,8 +172,8 @@ export const resetPassword = async (req, res, next) => {
     payload = jwt.verify(token, process.env.JWT_SECRET);
   } catch {
      // Повертаємо помилку якщо проблема при декодуванні
-     next(createHttpError(401, "Invalid or expired token"));
-     return;
+     throw createHttpError(401, "Invalid or expired token");
+
   }
 
   // 2. Шукаємо користувача
